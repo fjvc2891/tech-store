@@ -1,0 +1,22 @@
+{
+    "name": "wompi-tech-store-infrastructure",
+    "version": "1.0.0",
+    "bin": {
+        "app": "bin/app.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "test": "jest",
+        "cdk": "cdk"
+    },
+    "devDependencies": {
+        "@types/node": "20.11.16",
+        "typescript": "~5.3.3",
+        "aws-cdk": "2.130.0"
+    },
+    "dependencies": {
+        "aws-cdk-lib": "2.130.0",
+        "constructs": "^10.0.0"
+    }
+}

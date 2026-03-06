@@ -89,6 +89,31 @@ Once the backend is running, navigate to:
 - `POST /api/transactions`: Process payment via Wompi.
 - `POST /api/deliveries`: Register delivery details.
 
+## ☁️ Cloud Deployment (AWS)
+
+The project includes an **Infrastructure as Code (IaC)** package built with AWS Cloud Development Kit (CDK).
+
+### Architecture
+- **Frontend Stack**: S3 Bucket + Amazon CloudFront Distribution (Global Edge Delivery, HTTPS).
+- **Backend Stack**: VPC + RDS PostgreSQL + Amazon ECS Fargate (Serverless Containers) + Application Load Balancer.
+
+### Deploying to AWS
+1. Navigate to the `infrastructure/` directory:
+   ```bash
+   cd infrastructure
+   npm install
+   ```
+2. Configure your AWS CLI credentials (`aws configure`).
+3. Bootstrap the CDK environment (required once per AWS account/region):
+   ```bash
+   npx cdk bootstrap
+   ```
+4. Deploy the infrastructure (this will automatically build the backend Docker image and package the frontend dist):
+   ```bash
+   npx cdk deploy --all
+   ```
+The outputs of the deployment will provide you with the CloudFront URL (Frontend) and the Application Load Balancer DNS (Backend).
+
 ## 🔒 Security Highlights
 - Environment variables validation (Joi/class-validator).
 - Separation of concerns: Frontend only knows public keys (if direct widget used) or delegates completely to backend (current approach).
