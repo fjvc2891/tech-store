@@ -1,0 +1,341 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/products": {
+      "get": {
+        "operationId": "ProductsController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of products"
+          }
+        },
+        "summary": "Get all products with stock",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "operationId": "ProductsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product detail"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "summary": "Get product by ID",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/products/{id}/stock": {
+      "patch": {
+        "operationId": "ProductsController_decreaseStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stock updated"
+          }
+        },
+        "summary": "Decrease product stock",
+        "tags": [
+          "products"
+        ]
+      }
+    },
+    "/api/customers": {
+      "post": {
+        "operationId": "CustomersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer created"
+          }
+        },
+        "summary": "Create a new customer",
+        "tags": [
+          "customers"
+        ]
+      }
+    },
+    "/api/transactions": {
+      "post": {
+        "operationId": "TransactionsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transaction created and payment processed"
+          }
+        },
+        "summary": "Create transaction and process payment with Wompi",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{id}": {
+      "get": {
+        "operationId": "TransactionsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get transaction by ID",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/transactions/{id}/status": {
+      "patch": {
+        "operationId": "TransactionsController_updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update transaction status manually",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/deliveries": {
+      "post": {
+        "operationId": "DeliveriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDeliveryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Delivery record created"
+          }
+        },
+        "summary": "Create a delivery record for a transaction",
+        "tags": [
+          "deliveries"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Wompi Checkout API",
+    "description": "Fullstack test for payment processing",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "products",
+      "description": ""
+    },
+    {
+      "name": "customers",
+      "description": ""
+    },
+    {
+      "name": "transactions",
+      "description": ""
+    },
+    {
+      "name": "deliveries",
+      "description": ""
+    }
+  ],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "UpdateStockDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Juan Pérez"
+          },
+          "email": {
+            "type": "string",
+            "example": "juan@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+573001234567"
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "CreateTransactionDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "example": "uuid-product-id"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "uuid-customer-id"
+          },
+          "customerEmail": {
+            "type": "string",
+            "example": "juan@example.com"
+          },
+          "cardNumber": {
+            "type": "string",
+            "example": "4111111111111111"
+          },
+          "cardCvc": {
+            "type": "string",
+            "example": "123"
+          },
+          "expMonth": {
+            "type": "string",
+            "example": "12"
+          },
+          "expYear": {
+            "type": "string",
+            "example": "27"
+          },
+          "cardHolder": {
+            "type": "string",
+            "example": "Juan Pérez"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 1
+          }
+        },
+        "required": [
+          "productId",
+          "customerId",
+          "customerEmail",
+          "cardNumber",
+          "cardCvc",
+          "expMonth",
+          "expYear",
+          "cardHolder",
+          "quantity"
+        ]
+      },
+      "CreateDeliveryDto": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "example": "uuid-transaction-id"
+          },
+          "address": {
+            "type": "string",
+            "example": "Calle 123 #45-67"
+          },
+          "city": {
+            "type": "string",
+            "example": "Bogotá"
+          },
+          "department": {
+            "type": "string",
+            "example": "Cundinamarca"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "110111"
+          }
+        },
+        "required": [
+          "transactionId",
+          "address",
+          "city",
+          "department"
+        ]
+      }
+    }
+  }
+}

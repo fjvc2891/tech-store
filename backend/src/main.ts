@@ -2,11 +2,17 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
+import * as fs from 'fs';
+import * as path from 'path';
 import { ProductSeeder } from './modules/products/infrastructure/product.seeder';
 import { CustomerSeeder } from './modules/customers/infrastructure/customer.seeder';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Security Headers (OWASP bonus)
+  app.use(helmet());
 
   // Enable CORS for frontend
   app.enableCors();
@@ -34,6 +40,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+
+  // Export Swagger JSON for README/Postman (bonus)
+  fs.writeFileSync(
+    path.join(__dirname, '..', 'swagger.json'),
+    JSON.stringify(document, null, 2)
+  );
 
   // Run Seeders
   const productSeeders = app.get(ProductSeeder);
