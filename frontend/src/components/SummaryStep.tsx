@@ -30,8 +30,9 @@ const SummaryStep: React.FC = () => {
             // 1. Create Transaction + Process Wompi
             const txResponse = await axios.post(`${API_URL}/transactions`, {
                 productId: selectedProduct.id,
-                customerId: "0b1e1d3e-8c3b-4b1a-9c1a-1a2b3c4d5e6f", // Mock customer for demo
-                cardNumber: "4111111111111111", // Default sandbox card
+                customerId: "0b1e1d3e-8c3b-4b1a-9c1a-1a2b3c4d5e6f", // Mock customer ID for demo
+                customerEmail: customerData.email,
+                cardNumber: "4111111111111111", // Default sandbox card (Wompi restricts real ones in sandbox)
                 cardCvc: "123",
                 expMonth: "12",
                 expYear: "27",

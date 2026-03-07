@@ -66,7 +66,8 @@ export class WompiService {
             token: string;
             installments: number;
         };
-        signature: { integrity: string };
+        signature: string;
+        acceptance_token?: string;
         customer_data?: {
             phone_number?: string;
             full_name?: string;
@@ -82,6 +83,14 @@ export class WompiService {
         };
     }) {
         const response = await this.client.post('/transactions', payload);
+        return response.data.data;
+    }
+
+    /**
+     * Get merchant data including acceptance tokens
+     */
+    async getMerchantData() {
+        const response = await this.client.get(`/merchants/${this.publicKey}`);
         return response.data.data;
     }
 

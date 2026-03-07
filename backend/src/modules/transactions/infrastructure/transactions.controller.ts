@@ -62,22 +62,45 @@ export class TransactionsController {
         // 5. Call Wompi to process payment
         let wompiResponse: any;
         try {
+            // Fetch acceptance token first
+            const merchantData = await this.wompi.getMerchantData();
+            const acceptanceToken = merchantData.presigned_acceptance?.acceptance_token;
+
             wompiResponse = await this.wompi.createTransaction({
                 amount_in_cents: amountInCents,
                 currency: 'COP',
-                customer_email: '', // passed via customer
+                customer_email: dto.customerEmail,
                 reference,
                 payment_method: {
                     type: 'CARD',
                     token: cardToken,
                     installments: 1,
                 },
-                signature: { integrity: signature },
-            });
+                signature: signature,
+                acceptance_token: acceptanceToken,
+            } as any);
         } catch (error) {
             this.logger.error('Wompi payment error', error?.response?.data);
             await this.txRepo.update(savedTx.id, { status: TransactionStatus.ERROR });
-            throw new BadRequestException(error?.response?.data?.error?.messages?.join(', ') || 'Payment failed');
+
+            const errorData = error?.response?.data?.error;
+            let errorMessage = 'Payment failed';
+
+            if (errorData?.messages) {
+                // messages can be an object with arrays of strings
+                const messages = errorData.messages;
+                if (typeof messages === 'object' && !Array.isArray(messages)) {
+                    errorMessage = Object.entries(messages)
+                        .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
+                        .join('; ');
+                } else if (Array.isArray(messages)) {
+                    errorMessage = messages.join(', ');
+                }
+            } else if (errorData?.type) {
+                errorMessage = errorData.type;
+            }
+
+            throw new BadRequestException(errorMessage);
         }
 
         // 6. Update transaction with Wompi response

@@ -10,6 +10,11 @@ export class CreateTransactionDto {
     @IsUUID()
     customerId: string;
 
+    @ApiProperty({ example: 'juan@example.com' })
+    @IsString()
+    @IsNotEmpty()
+    customerEmail: string;
+
     @ApiProperty({ example: '4111111111111111' })
     @IsString()
     @IsNotEmpty()
